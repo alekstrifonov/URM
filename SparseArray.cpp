@@ -8,7 +8,42 @@ SparseArray::SparseArray()
     valueArray = {};
 }
 
-std::size_t SparseArray::size()
+bool SparseArray::isInIndexArray(const std::size_t position) const
+{
+    if (position > indexArray.back())
+    {
+        return false;
+    }
+    else
+    {
+        for (std::size_t i = 0; i < indexArray.size(); i++)
+        {
+            if (indexArray[i] == position)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+std::size_t SparseArray::getPositionIndex(const std::size_t position) const
+{
+    assert(isInIndexArray(position));
+    std::size_t result = 0;
+
+    for (std::size_t i = 0; i < indexArray.size(); i++)
+    {
+        if (indexArray[i] == position) // assert ensures us that function will always return a value
+        {
+            result = i;
+        }
+    }
+    return result;
+}
+
+std::size_t SparseArray::size() const
 {
     assert(valueArray.size() == indexArray.size());
 
@@ -17,21 +52,15 @@ std::size_t SparseArray::size()
 
 void SparseArray::ZERO(const std::size_t position)
 {
-    if (position > indexArray.back()) // highest index is last - element in position is already zero
+    if (!isInIndexArray(position))
     {
         return;
     }
 
-    for (std::size_t i = 0; i < indexArray.size(); i++)
-    {
-        if (indexArray[i] == position) // if element matches a position in our indexes - we need to remove it from the arrays since it's zero
-        {
-            indexArray.erase(indexArray.begin() + i);
-            valueArray.erase(valueArray.begin() + i);
+    const std::size_t indexToRemove = getPositionIndex(position);
 
-            return;
-        }
-    }
+    indexArray.erase(indexArray.begin() + indexToRemove);
+    valueArray.erase(valueArray.begin() + indexToRemove);
 }
 
 void SparseArray::INC(const std::size_t position)
@@ -71,11 +100,31 @@ void SparseArray::INC(const std::size_t position)
 
 void SparseArray::MOVE(const std::size_t x, const std::size_t y)
 {
+    if (!isInIndexArray(x))
+    {
+        ZERO(y);
+
+        return;
+    }
+
+    if (isInIndexArray(y))
+    {
+        valueArray[getPositionIndex(y)] = valueArray[getPositionIndex(x)];
+        return;
+    }
+    else
+    {
+        for (std::size_t i = 0; i < valueArray[getPositionIndex(x)]; i++)
+        {
+            INC(y);
+        }
+    }
 }
 
 void SparseArray::zero(const std::size_t begin, const std::size_t end)
 {
 }
+
 void SparseArray::set(unsigned int y, const std::size_t x)
 {
 }
@@ -92,11 +141,11 @@ void SparseArray::add(const std::vector<unsigned int> x)
     }
 }
 
-const std::vector<unsigned int> SparseArray::getValues()
+const std::vector<unsigned int> SparseArray::getValues() const
 {
     return valueArray;
 }
-const std::vector<unsigned int> SparseArray::getIndexes()
+const std::vector<unsigned int> SparseArray::getIndexes() const
 {
     return indexArray;
 }

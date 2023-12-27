@@ -1,13 +1,12 @@
 #pragma once
 #include <vector>
-#include <cassert>
 
 class SparseArray
 {
 public:
     SparseArray();
 
-    std::size_t size();
+    std::size_t size() const;
 
     void ZERO(const std::size_t position);
     void INC(const std::size_t position);
@@ -18,8 +17,12 @@ public:
 
     void add(std::vector<unsigned int> x);
 
-    const std::vector<unsigned int> getValues();
-    const std::vector<unsigned int> getIndexes();
+    const std::vector<unsigned int> getValues() const;
+    const std::vector<unsigned int> getIndexes() const;
+
+private:
+    bool isInIndexArray(const std::size_t position) const;
+    std::size_t getPositionIndex(const std::size_t position) const;
 
 private:
     std::vector<unsigned int> indexArray;
