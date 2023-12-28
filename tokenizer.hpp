@@ -7,16 +7,14 @@ class Tokenizer
 public:
     enum Tokens
     {
-        INSTRUCTION,
-        COMMAND,
-        OPERAND
+        ZERO, INC, MOVE, IF_JUMP, JUMP, RANGE_ZERO, SET, COPY, MEM, LOAD, RUN, ADD, QUOTE, CODE, COMMENT
     };
 
     struct Token
     {
         Tokens type;
         std::string keyword;
-        unsigned int value;
+        std::vector<unsigned int> value;//vector since not all functions are unitary
     };
 
     Tokenizer(std::istream &);
@@ -29,5 +27,5 @@ private:
     Token *peeked;
 };
 
-std::istream& operator>>(std::istream&, Tokenizer::Token&);
-std::ostream& operator<<(std::ostream&, Tokenizer::Token&);
+std::istream &operator>>(std::istream &, Tokenizer::Token &);
+std::ostream &operator<<(std::ostream &, Tokenizer::Token &);
