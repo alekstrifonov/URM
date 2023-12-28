@@ -4,10 +4,7 @@ void clear(std::istream &in)
 {
     char next = in.peek();
 
-    while (next == ' ' ||
-           next == '\n' ||
-           next == '\t' ||
-           next == '\r')
+    while (isspace(in.peek()))
     {
         in.get();
         next = in.peek();
@@ -16,7 +13,7 @@ void clear(std::istream &in)
 
 std::vector<unsigned int> getValues(std::istream &in)
 {
-    std::vector<unsigned int> values = {};
+    std::vector<unsigned int> values;
 
     char next = in.peek();
     assert(isdigit(next));
@@ -27,13 +24,12 @@ std::vector<unsigned int> getValues(std::istream &in)
         in >> value;
         values.push_back(value);
 
-        next = in.peek();
-
-        while (next == ' ')
+        while (isspace(in.peek()))
         {
             in.get();
-            next = in.peek();
         }
+
+        next = in.peek();        
     }
 
     return values;
@@ -149,7 +145,6 @@ std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
         clear(in);
 
         std::getline(in, t.keyword);
-
     }
     else if (keyword == "/code")
     {
@@ -163,4 +158,6 @@ std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
     {
         std::cout << "Wrong input" << std::endl; // will need to handle exceptions better in the future
     }
+
+    return in;
 }
