@@ -8,6 +8,18 @@ SparseArray::SparseArray()
     valueArray = {};
 }
 
+SparseArray::SparseArray(const std::vector<unsigned int> x)
+{
+    for (std::size_t i = 0; i < x.size(); i++)
+    {
+        if (x[i] != 0)
+        {
+            valueArray.push_back(x[i]);
+            indexArray.push_back(i);
+        }
+    }
+}
+
 bool SparseArray::isInIndexArray(const std::size_t position) const
 {
     if (position > indexArray.back())
@@ -41,6 +53,10 @@ std::size_t SparseArray::getPositionIndex(const std::size_t position) const
         }
     }
     return result;
+}
+
+void SparseArray::changeValue(const std::size_t position, unsigned int value)
+{
 }
 
 std::size_t SparseArray::size() const
@@ -123,22 +139,63 @@ void SparseArray::MOVE(const std::size_t x, const std::size_t y)
 
 void SparseArray::zero(const std::size_t begin, const std::size_t end)
 {
-}
-
-void SparseArray::set(unsigned int y, const std::size_t x)
-{
-}
-
-void SparseArray::add(const std::vector<unsigned int> x)
-{
-    for (std::size_t i = 0; i < x.size(); i++)
+    if (begin > end)
     {
-        if (x[i] != 0)
+        std::cerr << "INVALID RANGE GIVEN: " << begin << " IS LARGER THAN: " << end;
+    }
+
+    if (end < indexArray[0] || begin > indexArray.back())
+    {
+        return; // the range to nullify is already zero
+    }
+
+    std::size_t beginIndex = 0;
+    std::size_t endIndex = 0;
+
+    for (std::size_t i = 0; i < indexArray.size(); i++)
+    {
+        if (indexArray[i] >= begin && beginIndex == 0)
         {
-            valueArray.push_back(x[i]);
-            indexArray.push_back(i);
+            beginIndex = i;
+        }
+
+        if (indexArray[i] <= end)
+        {
+
+            endIndex = i + 1; // erase removes elemets in the range [first, last) - to erase last we need to increment it by 1
         }
     }
+
+    indexArray.erase(indexArray.begin() + beginIndex, indexArray.begin() + endIndex);
+    valueArray.erase(valueArray.begin() + beginIndex, valueArray.begin() + endIndex);
+}
+
+void SparseArray::set(const std::size_t position, unsigned int newValue)
+{
+    if (isInIndexArray(position))
+    {
+        valueArray[getPositionIndex(position)] = newValue;
+        return;
+    }
+
+    for (std::size_t i = 0; i < indexArray.size(); i++)
+    {
+        if (position < indexArray[i])
+        {
+            indexArray.insert(indexArray.begin() + i, position);
+            valueArray.insert(valueArray.begin() + i, newValue);
+
+            return;
+        }
+    }
+}
+
+void SparseArray::copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy)
+{
+}
+
+void SparseArray::mem(const std::size_t begin, const std::size_t end)
+{
 }
 
 const std::vector<unsigned int> SparseArray::getValues() const

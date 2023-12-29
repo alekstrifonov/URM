@@ -7,15 +7,16 @@ public:
     SparseArray();
 
     std::size_t size() const;
+    SparseArray(std::vector<unsigned int> x);
 
     void ZERO(const std::size_t position);
     void INC(const std::size_t position);
     void MOVE(const std::size_t x, const std::size_t y);
 
     void zero(const std::size_t begin, const std::size_t end);
-    void set(unsigned int y, const std::size_t x);
-
-    void add(std::vector<unsigned int> x);
+    void set(const std::size_t position, unsigned int newValue);
+    void copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy);
+    void mem(const std::size_t begin, const std::size_t end);
 
     const std::vector<unsigned int> getValues() const;
     const std::vector<unsigned int> getIndexes() const;
@@ -23,6 +24,8 @@ public:
 private:
     bool isInIndexArray(const std::size_t position) const;
     std::size_t getPositionIndex(const std::size_t position) const;
+
+    void changeValue(const std::size_t position, unsigned int value);
 
 private:
     std::vector<unsigned int> indexArray;
