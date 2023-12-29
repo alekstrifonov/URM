@@ -88,34 +88,113 @@ TEST_CASE("Test Basic Operators Tokenization")
 
     Tokenizer::Token token;
 
-        is >> token;
+    is >> token;
 
-        CHECK(token.type == Tokenizer::ZERO);
-        CHECK(token.value.size() == 1);
-        CHECK(token.value[0] == 1);
+    CHECK(token.type == Tokenizer::ZERO);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 1);
 
-        is >> token;
-        CHECK(token.type == Tokenizer::INC);
-        CHECK(token.value.size() == 1);
-        CHECK(token.value[0] == 2);
+    is >> token;
+    CHECK(token.type == Tokenizer::INC);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 2);
 
-        is >> token;
-        CHECK(token.type == Tokenizer::MOVE);
-        CHECK(token.value.size() == 2);
-        CHECK(token.value[0] == 1);
-        CHECK(token.value[1] == 2);
+    is >> token;
+    CHECK(token.type == Tokenizer::MOVE);
+    CHECK(token.value.size() == 2);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 2);
 
-        is >> token;
-        CHECK(token.type == Tokenizer::JUMP);
-        CHECK(token.value.size() == 1);
-        CHECK(token.value[0] == 3);
+    is >> token;
+    CHECK(token.type == Tokenizer::JUMP);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 3);
 
-        is >> token;
-        CHECK(token.type == Tokenizer::IF_JUMP);
-        CHECK(token.value.size() == 3);
-        CHECK(token.value[0] == 1);
-        CHECK(token.value[1] == 3);
-        CHECK(token.value[2] == 8);
+    is >> token;
+    CHECK(token.type == Tokenizer::IF_JUMP);
+    CHECK(token.value.size() == 3);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 3);
+    CHECK(token.value[2] == 8);
+}
+
+TEST_CASE("Test From File")
+{
+    std::ifstream is("test.txt");
+
+    Tokenizer tokenizer(is); // Create tokenizer using file stream
+
+    Tokenizer::Token token;
+
+    is >> token;
+    CHECK(token.type == Tokenizer::ZERO);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 1);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::INC);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 2);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::MOVE);
+    CHECK(token.value.size() == 2);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 2);
+    
+    is >> token;
+    CHECK(token.type == Tokenizer::JUMP);
+    CHECK(token.value.size() == 1);
+    CHECK(token.value[0] == 3);
+    is >> token;
+
+    CHECK(token.type == Tokenizer::IF_JUMP);
+    CHECK(token.value.size() == 3);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 3);
+    CHECK(token.value[2] == 8);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::RANGE_ZERO);
+    CHECK(token.value.size() == 2);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 5);
+    
+    is >> token;
+    CHECK(token.type == Tokenizer::SET);
+    CHECK(token.value.size() == 2);
+    CHECK(token.value[0] == 2);
+    CHECK(token.value[1] == 4);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::MEM);
+    CHECK(token.value.size() == 2);
+    CHECK(token.value[0] == 1);
+    CHECK(token.value[1] == 2);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::LOAD);
+    CHECK(token.keyword == "fib.urm");
+
+    is >> token;
+    CHECK(token.type == Tokenizer::RUN);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::ADD);
+    CHECK(token.keyword == "rand.urm");
+
+    is >> token;
+    CHECK(token.type == Tokenizer::QUOTE);
+    CHECK(token.keyword == "SET 2 3");
+
+    is >> token;
+    CHECK(token.type == Tokenizer::CODE);
+
+    is >> token;
+    CHECK(token.type == Tokenizer::COMMENT);
+    CHECK(token.keyword == "This is a comment");
+
+    is.close();
 }
 
 int main()
