@@ -14,7 +14,7 @@ public:
     {
         Tokens type;
         std::string keyword;
-        std::vector<unsigned int> value;//vector since not all functions are unitary
+        std::vector<std::size_t> value;//vector since not all functions are unitary
     };
 
     Tokenizer(std::istream &);

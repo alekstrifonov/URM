@@ -11,16 +11,16 @@ void clear(std::istream &in)
     }
 }
 
-std::vector<unsigned int> getValues(std::istream &in)
+ std::vector<std::size_t> getValues(std::istream &in)
 {
-    std::vector<unsigned int> values;
+     std::vector<std::size_t> values = {};
 
     char next = in.peek();
     assert(isdigit(next));
 
     while (isdigit(next))
     {
-        unsigned int value;
+        std::size_t value;
         in >> value;
         values.push_back(value);
 
@@ -29,7 +29,7 @@ std::vector<unsigned int> getValues(std::istream &in)
             in.get();
         }
 
-        next = in.peek();        
+        next = in.peek();
     }
 
     return values;
@@ -39,9 +39,11 @@ Tokenizer::Tokenizer(std::istream &_in) : in(_in) {}
 
 std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
 {
+    clear(in);
     std::string keyword;
 
     in >> keyword;
+
 
     if (keyword == "ZERO")
     {
@@ -93,7 +95,7 @@ std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
 
         assert(t.value.size() == 2);
     }
-    else if (t.keyword == "/set")
+    else if (keyword == "/set")
     {
         t.type = Tokenizer::SET;
         clear(in);
@@ -102,7 +104,7 @@ std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
 
         assert(t.value.size() == 2);
     }
-    else if (t.keyword == "/copy")
+    else if (keyword == "/copy")
     {
         t.type = Tokenizer::COPY;
         clear(in);
@@ -153,10 +155,14 @@ std::istream &operator>>(std::istream &in, Tokenizer::Token &t)
     else if (keyword == "/comment")
     {
         t.type = Tokenizer::COMMENT;
+        clear(in);
+
+        std::getline(in, t.keyword);
+
     }
     else
     {
-        std::cout << "Wrong input" << std::endl; // will need to handle exceptions better in the future
+        std::cout << "WRONG INPUT: " << keyword << std::endl; // will need to handle exceptions better in the future
     }
 
     return in;
