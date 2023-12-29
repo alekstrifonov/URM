@@ -20,11 +20,9 @@ void compare(const SparseArray &a, const std::vector<unsigned int> &b)
 
 TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS")
 {
-    SparseArray a;
-
     std::vector<unsigned int> b = {1, 0, 0, 5, 0, 4, 3};
 
-    a.add(b);
+    SparseArray a(b);
 
     compare(a, b);
 }
@@ -57,11 +55,10 @@ TEST_CASE("TEST ZERO AND INC")
 
 TEST_CASE("TEST MOVE")
 {
-    SparseArray a;
-
     std::vector<unsigned int> b = {4, 1, 1, 1};
 
-    a.add(b);
+    SparseArray a(b);
+
     b.push_back(4);
 
     a.MOVE(0, 4);
@@ -79,6 +76,47 @@ TEST_CASE("TEST MOVE")
     std::vector<unsigned int> c = {2, 2, 1};
 
     compare(a, c);
+}
+
+TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
+{
+    std::vector<unsigned int> b = {0, 2, 9, 0, 1, 3, 4, 5, 0, 2, 7};
+
+    SparseArray a(b);
+
+    SUBCASE("TESTING /zero")
+    {
+        a.zero(3, 8);
+
+        CHECK(a.size() == 4);
+
+        std::vector<unsigned int> valueResult = {2, 9, 2, 7};
+        std::vector<unsigned int> indexResult = {1, 2, 9, 10};
+
+        for (std::size_t i = 0; i < a.size(); i++)
+        {
+            CHECK(a.getIndexes()[i] == indexResult[i]);
+            CHECK(a.getValues()[i] == valueResult[i]);
+        }
+
+        a.zero(11, 13);
+        CHECK(a.size() == 4);
+    }
+
+    SUBCASE("TESTING /set")
+    {
+        CHECK(a.size() == 8);
+    }
+
+    SUBCASE("TESTING /copy")
+    {
+        CHECK(a.size() == 8);
+    }
+
+    SUBCASE("TESTING /mem")
+    {
+        CHECK(a.size() == 8);
+    }
 }
 
 TEST_CASE("Test Basic Operators Tokenization")
@@ -141,7 +179,7 @@ TEST_CASE("Test From File")
     CHECK(token.value.size() == 2);
     CHECK(token.value[0] == 1);
     CHECK(token.value[1] == 2);
-    
+
     is >> token;
     CHECK(token.type == Tokenizer::JUMP);
     CHECK(token.value.size() == 1);
@@ -159,7 +197,7 @@ TEST_CASE("Test From File")
     CHECK(token.value.size() == 2);
     CHECK(token.value[0] == 1);
     CHECK(token.value[1] == 5);
-    
+
     is >> token;
     CHECK(token.type == Tokenizer::SET);
     CHECK(token.value.size() == 2);
