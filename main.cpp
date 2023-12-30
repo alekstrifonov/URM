@@ -106,16 +106,32 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
     SUBCASE("TESTING /set")
     {
         CHECK(a.size() == 8);
+
+        a.set(4, 2);
+        CHECK(a.size() == 8);
+        CHECK(a.getValues()[2] == 2);
+
+        a.set(3, 3);
+        CHECK(a.size() == 9);
+        std::vector<unsigned int> toCompare = {2, 9, 3, 2, 3, 4, 5, 2, 7};
+        compare(a, toCompare);
     }
 
     SUBCASE("TESTING /copy")
     {
-        CHECK(a.size() == 8);
+        std::vector<unsigned int> toCompare = {2, 9, 2, 9, 4, 5, 2, 7};
+        a.copy(0, 3, 3);
+        a.mem(0,11);
+        compare(a, toCompare);
+
+        a.copy(0, 11, 11);
+        CHECK(a.size() == 16);
     }
 
     SUBCASE("TESTING /mem")
     {
         CHECK(a.size() == 8);
+        a.mem(0, 11);
     }
 }
 
