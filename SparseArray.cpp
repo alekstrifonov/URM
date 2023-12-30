@@ -55,15 +55,38 @@ std::size_t SparseArray::getPositionIndex(const std::size_t position) const
     return result;
 }
 
-void SparseArray::changeValue(const std::size_t position, unsigned int value)
-{
-}
-
 std::size_t SparseArray::size() const
 {
     assert(valueArray.size() == indexArray.size());
 
     return valueArray.size();
+}
+
+bool SparseArray::equal(const std::size_t x, const std::size_t y) //helper function for URM's IF_JUMP
+{
+    if (!isInIndexArray(x))
+    {
+        if (!isInIndexArray(y))
+        {
+            return true; //both are zero
+        }
+        return false; //x == 0, y != 0
+    }
+
+    if (!isInIndexArray(y))
+    {
+        return false; //x != 0, y == 0
+    }
+    
+    return valueArray[getPositionIndex(x)] == valueArray[getPositionIndex(y)];
+}
+
+void SparseArray::clear()
+{
+    indexArray.clear();
+    indexArray.shrink_to_fit(); //ensure capacity is at zero
+    valueArray.clear();
+    valueArray.shrink_to_fit();
 }
 
 void SparseArray::ZERO(const std::size_t position)
@@ -123,18 +146,7 @@ void SparseArray::MOVE(const std::size_t x, const std::size_t y)
         return;
     }
 
-    if (isInIndexArray(y))
-    {
-        valueArray[getPositionIndex(y)] = valueArray[getPositionIndex(x)];
-        return;
-    }
-    else
-    {
-        for (std::size_t i = 0; i < valueArray[getPositionIndex(x)]; i++)
-        {
-            INC(y);
-        }
-    }
+    set(y, valueArray[getPositionIndex(x)]);
 }
 
 void SparseArray::zero(const std::size_t begin, const std::size_t end)
@@ -172,12 +184,25 @@ void SparseArray::zero(const std::size_t begin, const std::size_t end)
 
 void SparseArray::set(const std::size_t position, unsigned int newValue)
 {
+    if(newValue == 0)
+    {
+        ZERO(position);
+    }
+
     if (isInIndexArray(position))
     {
         valueArray[getPositionIndex(position)] = newValue;
         return;
     }
 
+    if (position > indexArray.back())
+    {
+       indexArray.push_back(position);
+       valueArray.push_back(newValue);
+
+       return;
+    }
+    
     for (std::size_t i = 0; i < indexArray.size(); i++)
     {
         if (position < indexArray[i])
@@ -192,10 +217,25 @@ void SparseArray::set(const std::size_t position, unsigned int newValue)
 
 void SparseArray::copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy)
 {
+    for (std::size_t i = 0; i < ammountToCopy; i++)
+    {
+        MOVE(begin + i, end + i);
+    }
+    
 }
 
 void SparseArray::mem(const std::size_t begin, const std::size_t end)
 {
+    for (std::size_t i = 0; i < end; i++)
+    {
+        if (isInIndexArray(begin + i))
+        {
+            std::cout << valueArray[getPositionIndex(begin + i)] << " ";
+        } else {
+            std::cout << 0 << " ";
+        }
+    }
+    std::cout << std::endl;
 }
 
 const std::vector<unsigned int> SparseArray::getValues() const
