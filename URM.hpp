@@ -8,13 +8,16 @@ public:
     URM();
     URM(const Tokenizer::Token& t);
 
-    void loadFromFile(std::ifstream& is);
+
+    void loadFromFile(const std::string&  fileName);
     void dialogue();
 
     void print() const;
+    void evaluate(std::istream&);
 
 private:
-    void evaluate();
+    void JUMP(const std::size_t, std::istream& is);
+    void IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z, std::istream& is);
 
 private:
     Tokenizer::Token currentInstruction;
