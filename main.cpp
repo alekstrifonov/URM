@@ -4,6 +4,7 @@
 #include "doctest.h"
 #include "SparseArray.hpp"
 #include "tokenizer.hpp"
+#include "URM.hpp"
 
 void compare(const SparseArray &a, const std::vector<unsigned int> &b)
 {
@@ -121,7 +122,7 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
     {
         std::vector<unsigned int> toCompare = {2, 9, 2, 9, 4, 5, 2, 7};
         a.copy(0, 3, 3);
-        a.mem(0,11);
+        a.mem(0, 11);
         compare(a, toCompare);
 
         a.copy(0, 11, 11);
@@ -227,6 +228,10 @@ TEST_CASE("Test From File")
     CHECK(token.value[1] == 2);
 
     is >> token;
+    CHECK(token.type == Tokenizer::COMMENT);
+    CHECK(token.keyword == "This is a comment");
+
+    is >> token;
     CHECK(token.type == Tokenizer::LOAD);
     CHECK(token.keyword == "fib.urm");
 
@@ -249,6 +254,27 @@ TEST_CASE("Test From File")
     CHECK(token.keyword == "This is a comment");
 
     is.close();
+}
+
+TEST_CASE("TEST URM BASIC FUNCTIONALITY")
+{
+
+    std::ifstream is("temp.urm");
+
+    URM a(is);
+
+    // SUBCASE("Test tokenization")
+    // {
+    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
+    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
+    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::COMMENT);
+    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+    // }
+    // a.evaluate(is);
+    //  CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+    //  CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+
+    a.run(is);
 }
 
 int main()
