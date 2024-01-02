@@ -2,16 +2,20 @@
 
 URM::URM() = default;
 
-URM::URM(const Tokenizer::Token &t)
+URM::URM(std::istream &is)
 {
-    currentInstruction.type = t.type;
-    currentInstruction.keyword = t.keyword;
-    currentInstruction.value = t.value;
+    JUMP_INCREMENT = 0;
+}
+
+Tokenizer::Token URM::getCurrentInstruction(std::istream& is)
+{
+    is >> currentInstruction;
+    return currentInstruction;
 }
 
 void URM::JUMP(const std::size_t instructionNumber, std::istream &is)
 {
-    for (std::size_t i = 0; i < instructionNumber; i++)
+    for (std::size_t i = 0; i < instructionNumber + JUMP_INCREMENT; i++)
     {
         is >> currentInstruction;
     }
@@ -25,7 +29,7 @@ void URM::IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z,
     }
 }
 
-void URM::loadFromFile(const std::string& fileName)
+void URM::loadFromFile(const std::string &fileName)
 {
     memory.clear();
 
@@ -33,6 +37,25 @@ void URM::loadFromFile(const std::string& fileName)
     Tokenizer tokenizer(is);
 
     is >> currentInstruction;
+}
+
+void URM::run(std::istream &is)
+{
+    while (!is.eof())
+    {
+        is >> currentInstruction;
+        std::cout << "CURRENT I: " << currentInstruction.type << std::endl;
+        if (!is.good())
+        {
+        }
+        evaluate(is);
+    }
+}
+
+void URM::run(const std::string &fileName)
+{
+    std::ifstream is(currentInstruction.keyword);
+    run(is);
 }
 
 void URM::dialogue()
@@ -43,7 +66,7 @@ void URM::print() const
 {
 }
 
-void URM::evaluate(std::istream& is)
+void URM::evaluate(std::istream &is)
 {
     switch (currentInstruction.type)
     {
@@ -74,6 +97,7 @@ void URM::evaluate(std::istream& is)
     case Tokenizer::SET:
         memory.set(currentInstruction.value[0], currentInstruction.value[1]);
         break;
+
     case Tokenizer::COPY:
         memory.copy(currentInstruction.value[0], currentInstruction.value[1], currentInstruction.value[2]);
         break;
@@ -81,12 +105,13 @@ void URM::evaluate(std::istream& is)
     case Tokenizer::MEM:
         memory.mem(currentInstruction.value[0], currentInstruction.value[1]);
         break;
+
     case Tokenizer::LOAD:
-        /* code */
+        loadFromFile(currentInstruction.keyword);
         break;
 
     case Tokenizer::RUN:
-        /* code */
+        run(currentInstruction.keyword);
         break;
     case Tokenizer::ADD:
         /* code */
@@ -98,8 +123,8 @@ void URM::evaluate(std::istream& is)
     case Tokenizer::CODE:
         /* code */
         break;
-    case Tokenizer::COMMENT:
-        //is >> currentInstruction;
+        
+    case Tokenizer::COMMENT: //add exception for empty comments
         break;
 
     default:
