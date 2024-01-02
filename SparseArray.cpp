@@ -221,7 +221,6 @@ void SparseArray::copy(const std::size_t begin, const std::size_t end, const std
     {
         MOVE(begin + i, end + i);
     }
-    
 }
 
 void SparseArray::mem(const std::size_t begin, const std::size_t end)
