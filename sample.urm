@@ -1,0 +1,13 @@
+ZERO 0
+ZERO 2
+INC 0
+INC 1
+INC 1
+INC 2
+/add shrek.urm
+/comment nonsense
+/comment nonsense
+INC 2
+INC 2
+/comment nonsense
+/mem 0 3
