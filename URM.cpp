@@ -1,13 +1,32 @@
 #include "URM.hpp"
 
-URM::URM() = default;
-
-URM::URM(std::istream &is)
+URM::URM()
 {
     JUMP_INCREMENT = 0;
+    tempFileName = "instructions.urm";
+    numberOfInstructions = 0;
+    clearTempFile();
+    inFile.open(tempFileName, std::ios::in);
 }
 
-Tokenizer::Token URM::getCurrentInstruction(std::istream& is)
+URM::~URM()
+{
+    if (outFile.is_open())
+        outFile.close();
+    if (inFile.is_open())
+        inFile.close();
+}
+
+void URM::clearTempFile()
+{
+    std::ofstream clearFile(tempFileName, std::ios::trunc);
+    if (clearFile.is_open())
+    {
+        clearFile.close();
+    }
+}
+
+Tokenizer::Token URM::getCurrentInstruction(std::istream &is)
 {
     is >> currentInstruction;
     return currentInstruction;
@@ -32,38 +51,72 @@ void URM::IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z,
 void URM::loadFromFile(const std::string &fileName)
 {
     memory.clear();
-
-    std::ifstream is(fileName);
-    Tokenizer tokenizer(is);
-
-    is >> currentInstruction;
+    add(fileName);
 }
 
-void URM::run(std::istream &is)
+void URM::run()
 {
-    while (!is.eof())
+    assert(inFile.is_open());
+
+    std::streampos lastPosition;
+
+
+    std::size_t processedInstructions = 0; //keep track of processed instructions
+
+    while (!inFile.eof() && processedInstructions < numberOfInstructions)
     {
-        is >> currentInstruction;
+        inFile >> currentInstruction;
         std::cout << "CURRENT I: " << currentInstruction.type << std::endl;
-        if (!is.good())
+        evaluate(inFile);
+
+        ++processedInstructions; 
+        lastPosition = inFile.tellg(); //keep track of position in the tempfile
+    }
+
+    while(processedInstructions < numberOfInstructions - 1) //check whether the tempfile was changed
+    {
+        inFile.close();
+        inFile.open(tempFileName, std::ios::in); //reopen the tempfile to reload the data
+        inFile.seekg(lastPosition); //go to the newest instruction
+
+        for (;processedInstructions < numberOfInstructions - 1; processedInstructions++)
         {
+
+            inFile >> currentInstruction;
+            std::cout << "CURRENT I: " << currentInstruction.type << std::endl;
+            evaluate(inFile);
         }
-        evaluate(is);
+
+        lastPosition = inFile.tellg();
+    }
+
+    if (inFile.is_open())
+    {
+        inFile.close();
     }
 }
 
-void URM::run(const std::string &fileName)
+void URM::add(const std::string &fileName)
 {
-    std::ifstream is(currentInstruction.keyword);
-    run(is);
-}
+    outFile.open(tempFileName, std::ios::app);
+    assert(outFile.is_open());
 
-void URM::dialogue()
-{
-}
+    std::ifstream fileToAdd(fileName);
 
-void URM::print() const
-{
+    if (!fileToAdd)
+    {
+        std::cerr << "Unable to open input file: " << fileName;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(fileToAdd, line))
+    {
+        outFile << line << "\n";
+        ++numberOfInstructions;
+    }
+ 
+    outFile.close();
 }
 
 void URM::evaluate(std::istream &is)
@@ -111,10 +164,11 @@ void URM::evaluate(std::istream &is)
         break;
 
     case Tokenizer::RUN:
-        run(currentInstruction.keyword);
+        run();
         break;
     case Tokenizer::ADD:
-        /* code */
+        std::cout << "We've added: " << currentInstruction.keyword << std::endl;
+        add(currentInstruction.keyword);
         break;
 
     case Tokenizer::QUOTE:
@@ -123,8 +177,8 @@ void URM::evaluate(std::istream &is)
     case Tokenizer::CODE:
         /* code */
         break;
-        
-    case Tokenizer::COMMENT: //add exception for empty comments
+
+    case Tokenizer::COMMENT: // add exception for empty comments
         break;
 
     default:
