@@ -62,29 +62,29 @@ std::size_t SparseArray::size() const
     return valueArray.size();
 }
 
-bool SparseArray::equal(const std::size_t x, const std::size_t y) //helper function for URM's IF_JUMP
+bool SparseArray::equal(const std::size_t x, const std::size_t y) // helper function for URM's IF_JUMP
 {
     if (!isInIndexArray(x))
     {
         if (!isInIndexArray(y))
         {
-            return true; //both are zero
+            return true; // both are zero
         }
-        return false; //x == 0, y != 0
+        return false; // x == 0, y != 0
     }
 
     if (!isInIndexArray(y))
     {
-        return false; //x != 0, y == 0
+        return false; // x != 0, y == 0
     }
-    
+
     return valueArray[getPositionIndex(x)] == valueArray[getPositionIndex(y)];
 }
 
 void SparseArray::clear()
 {
     indexArray.clear();
-    indexArray.shrink_to_fit(); //ensure capacity is at zero
+    indexArray.shrink_to_fit(); // ensure capacity is at zero
     valueArray.clear();
     valueArray.shrink_to_fit();
 }
@@ -184,7 +184,7 @@ void SparseArray::zero(const std::size_t begin, const std::size_t end)
 
 void SparseArray::set(const std::size_t position, unsigned int newValue)
 {
-    if(newValue == 0)
+    if (newValue == 0)
     {
         ZERO(position);
     }
@@ -197,12 +197,12 @@ void SparseArray::set(const std::size_t position, unsigned int newValue)
 
     if (position > indexArray.back())
     {
-       indexArray.push_back(position);
-       valueArray.push_back(newValue);
+        indexArray.push_back(position);
+        valueArray.push_back(newValue);
 
-       return;
+        return;
     }
-    
+
     for (std::size_t i = 0; i < indexArray.size(); i++)
     {
         if (position < indexArray[i])
@@ -230,7 +230,9 @@ void SparseArray::mem(const std::size_t begin, const std::size_t end)
         if (isInIndexArray(begin + i))
         {
             std::cout << valueArray[getPositionIndex(begin + i)] << " ";
-        } else {
+        }
+        else
+        {
             std::cout << 0 << " ";
         }
     }
