@@ -258,23 +258,18 @@ TEST_CASE("Test From File")
 
 TEST_CASE("TEST URM BASIC FUNCTIONALITY")
 {
-
     std::ifstream is("temp.urm");
 
-    URM a(is);
+    URM a;
 
-    // SUBCASE("Test tokenization")
-    // {
-    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
-    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
-    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::COMMENT);
-    // CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
-    // }
-    // a.evaluate(is);
-    //  CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
-    //  CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
+    a.evaluate(is);
 
-    a.run(is);
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
+    a.evaluate(is);
+
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+    a.evaluate(is);
 }
 
 int main()
