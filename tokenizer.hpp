@@ -1,21 +1,21 @@
 #pragma once
-#include <string>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <string>
 
-class Tokenizer
-{
-public:
-    enum Tokens
-    {
+class Tokenizer {
+   public:
+    enum Tokens {
         ZERO, INC, MOVE, IF_JUMP, JUMP, RANGE_ZERO, SET, COPY, MEM, LOAD, RUN, ADD, QUOTE, CODE, COMMENT
     };
 
-    struct Token
-    {
+    struct Token {
         Tokens type;
         std::string keyword;
-        std::vector<std::size_t> value;//vector since not all functions are unitary
+        std::vector<std::size_t>
+            value;  // vector since not all functions are unitary
+
+        bool operator==(const Token &);
     };
 
     Tokenizer(std::istream &);
@@ -23,7 +23,7 @@ public:
     Token getNextToken();
     Token peekToken();
 
-private:
+   private:
     std::istream &in;
     Token *peeked;
 };
