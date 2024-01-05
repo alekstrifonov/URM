@@ -1,26 +1,23 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 
 #include <iostream>
-#include "doctest.h"
-#include "SparseArray.hpp"
-#include "tokenizer.hpp"
-#include "URM.hpp"
 
-void compare(const SparseArray &a, const std::vector<unsigned int> &b)
-{
+#include "SparseArray.hpp"
+#include "URM.hpp"
+#include "doctest.h"
+#include "tokenizer.hpp"
+
+void compare(const SparseArray &a, const std::vector<unsigned int> &b) {
     std::size_t j = 0;
-    for (std::size_t i = 0; i < b.size(); i++)
-    {
-        if (b[i] != 0)
-        {
+    for (std::size_t i = 0; i < b.size(); i++) {
+        if (b[i] != 0) {
             CHECK(a.getValues()[j] == b[i]);
             ++j;
         }
     }
 }
 
-TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS")
-{
+TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS") {
     std::vector<unsigned int> b = {1, 0, 0, 5, 0, 4, 3};
 
     SparseArray a(b);
@@ -28,8 +25,7 @@ TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS")
     compare(a, b);
 }
 
-TEST_CASE("TEST ZERO AND INC")
-{
+TEST_CASE("TEST ZERO AND INC") {
     SparseArray a;
 
     std::vector<unsigned int> b = {1, 2, 3};
@@ -54,8 +50,7 @@ TEST_CASE("TEST ZERO AND INC")
     CHECK(a.size() == 0);
 }
 
-TEST_CASE("TEST MOVE")
-{
+TEST_CASE("TEST MOVE") {
     std::vector<unsigned int> b = {4, 1, 1, 1};
 
     SparseArray a(b);
@@ -79,14 +74,12 @@ TEST_CASE("TEST MOVE")
     compare(a, c);
 }
 
-TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
-{
+TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS") {
     std::vector<unsigned int> b = {0, 2, 9, 0, 1, 3, 4, 5, 0, 2, 7};
 
     SparseArray a(b);
 
-    SUBCASE("TESTING /zero")
-    {
+    SUBCASE("TESTING /zero") {
         a.zero(3, 8);
 
         CHECK(a.size() == 4);
@@ -94,8 +87,7 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
         std::vector<unsigned int> valueResult = {2, 9, 2, 7};
         std::vector<unsigned int> indexResult = {1, 2, 9, 10};
 
-        for (std::size_t i = 0; i < a.size(); i++)
-        {
+        for (std::size_t i = 0; i < a.size(); i++) {
             CHECK(a.getIndexes()[i] == indexResult[i]);
             CHECK(a.getValues()[i] == valueResult[i]);
         }
@@ -104,8 +96,7 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
         CHECK(a.size() == 4);
     }
 
-    SUBCASE("TESTING /set")
-    {
+    SUBCASE("TESTING /set") {
         CHECK(a.size() == 8);
 
         a.set(4, 2);
@@ -118,8 +109,7 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
         compare(a, toCompare);
     }
 
-    SUBCASE("TESTING /copy")
-    {
+    SUBCASE("TESTING /copy") {
         std::vector<unsigned int> toCompare = {2, 9, 2, 9, 4, 5, 2, 7};
         a.copy(0, 3, 3);
         a.mem(0, 11);
@@ -129,15 +119,13 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS")
         CHECK(a.size() == 16);
     }
 
-    SUBCASE("TESTING /mem")
-    {
+    SUBCASE("TESTING /mem") {
         CHECK(a.size() == 8);
         a.mem(0, 11);
     }
 }
 
-TEST_CASE("Test Basic Operators Tokenization")
-{
+TEST_CASE("Test Basic Operators Tokenization") {
     std::istringstream is("ZERO 1\n INC 2\nMOVE 1 2\nJUMP 3\nJUMP 1 3 8\n");
     Tokenizer tokenizer(is);
 
@@ -173,11 +161,10 @@ TEST_CASE("Test Basic Operators Tokenization")
     CHECK(token.value[2] == 8);
 }
 
-TEST_CASE("Test From File")
-{
+TEST_CASE("Test From File") {
     std::ifstream is("test.txt");
 
-    Tokenizer tokenizer(is); // Create tokenizer using file stream
+    Tokenizer tokenizer(is);  // Create tokenizer using file stream
 
     Tokenizer::Token token;
 
@@ -256,8 +243,7 @@ TEST_CASE("Test From File")
     is.close();
 }
 
-TEST_CASE("TEST URM BASIC FUNCTIONALITY")
-{
+TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     std::ifstream is("temp.urm");
 
     URM a;
@@ -270,9 +256,41 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY")
 
     CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
     a.evaluate(is);
+
+    std::ifstream loadedFile("sample.urm");
+    std::ifstream instructionsFile("instructionsCopy.urm");
+
+    Tokenizer loadedTokenizer(loadedFile);
+    Tokenizer instructionTokenizer(instructionsFile);
+
+    Tokenizer::Token loadedToken;
+    Tokenizer::Token instructionToken;
+
+    while (!loadedFile.eof()) {
+        loadedFile >> loadedToken;
+        instructionsFile >> instructionToken;
+
+        CHECK(loadedToken == instructionToken);
+    }
+
+    loadedFile.close();
+
+    std::ifstream addedFile("shrek.urm");
+    Tokenizer addedTokenizer(addedFile);
+
+    Tokenizer::Token addedToken;
+
+    while (!addedFile.eof()) {
+        addedFile >> addedToken;
+        instructionsFile >> instructionToken;
+
+        CHECK(addedToken == instructionToken);
+    }
+
+    addedFile.close();
 }
 
-int main()
-{
-    doctest::Context().run();
+int main() { 
+doctest::Context().run(); 
+
 }
