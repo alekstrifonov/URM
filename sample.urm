@@ -8,6 +8,8 @@ INC 2
 /comment nonsense
 /comment nonsense
 INC 2
+/quote /mem 0 3
+/quote JUMP 3
 INC 2
 /comment nonsense
 /mem 0 3
