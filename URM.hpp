@@ -1,11 +1,12 @@
 #pragma once
-#include "tokenizer.hpp"
-#include "SparseArray.hpp"
 #include <fstream>
+#include <sstream>
 
-class URM
-{
-public:
+#include "SparseArray.hpp"
+#include "tokenizer.hpp"
+
+class URM {
+   public:
     URM();
     ~URM();
 
@@ -17,16 +18,20 @@ public:
     void print() const;
     void evaluate(std::istream &);
 
-private:
+    void getInstructions();
+
+   private:
+    void quote(const std::string &instruction);
     void run();
     void add(const std::string &fileName);
-    
+
     void clearTempFile();
 
-    void JUMP(const std::size_t, std::istream &is);
-    void IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z, std::istream &is);
+    void JUMP(const std::size_t);
+    void IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z,
+                 std::istream &is);
 
-private:
+   private:
     Tokenizer::Token currentInstruction;
     SparseArray memory;
     std::size_t JUMP_INCREMENT;
