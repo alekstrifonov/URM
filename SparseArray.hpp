@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <vector>
 
 class SparseArray {
@@ -10,10 +11,9 @@ class SparseArray {
 
     bool equal(const std::size_t x, const std::size_t y);
 
-    void clear();
-
     const std::vector<unsigned int> getValues() const;
-    const std::vector<unsigned int> getIndexes() const;
+    const std::vector<std::size_t> getIndexes() const;
+    void clear();
 
    public:
     void ZERO(const std::size_t position);
@@ -22,17 +22,14 @@ class SparseArray {
 
     void zero(const std::size_t begin, const std::size_t end);
     void set(const std::size_t position, unsigned int newValue);
-    void copy(const std::size_t begin, const std::size_t end,
-              const std::size_t ammountToCopy);
+    void copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy);
     void mem(const std::size_t begin, const std::size_t end);
 
    private:
     bool isInIndexArray(const std::size_t position) const;
-    std::size_t getPositionIndex(const std::size_t position) const;
 
     void changeValue(const std::size_t position, unsigned int value);
 
-   private:
-    std::vector<unsigned int> indexArray;
-    std::vector<unsigned int> valueArray;
+    private:
+    std::map<std::size_t, unsigned int> memory;
 };
