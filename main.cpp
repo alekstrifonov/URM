@@ -1,11 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 
-#include <iostream>
-
 #include "SparseArray.hpp"
 #include "URM.hpp"
 #include "doctest.h"
 #include "tokenizer.hpp"
+#include <iostream>
 
 void compare(const SparseArray &a, const std::vector<unsigned int> &b) {
     std::size_t j = 0;
@@ -164,7 +163,7 @@ TEST_CASE("Test Basic Operators Tokenization") {
 TEST_CASE("Test From File") {
     std::ifstream is("test.txt");
 
-    Tokenizer tokenizer(is);  // Create tokenizer using file stream
+    Tokenizer tokenizer(is); // Create tokenizer using file stream
 
     Tokenizer::Token token;
 
@@ -258,7 +257,8 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     a.evaluate(is);
 
     std::ifstream loadedFile("sample.urm");
-    std::ifstream instructionsFile("instructionsCopy.urm");
+    a.getInstructions();
+    std::ifstream instructionsFile("CODE.urm");
 
     Tokenizer loadedTokenizer(loadedFile);
     Tokenizer instructionTokenizer(instructionsFile);
@@ -290,7 +290,10 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     addedFile.close();
 }
 
-int main() { 
-doctest::Context().run(); 
+int main() {
+    doctest::Context().run();
 
+    URM a;
+    // a.dialogue();
+    // a.getInstructions();
 }
