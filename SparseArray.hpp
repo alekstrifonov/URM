@@ -3,19 +3,19 @@
 #include <vector>
 
 class SparseArray {
-   public:
+public:
     SparseArray();
 
     std::size_t size() const;
     SparseArray(std::vector<unsigned int> x);
 
-    bool equal(const std::size_t x, const std::size_t y);
-
     const std::vector<unsigned int> getValues() const;
     const std::vector<std::size_t> getIndexes() const;
+
+    bool equal(const std::size_t x, const std::size_t y);
     void clear();
 
-   public:
+public:
     void ZERO(const std::size_t position);
     void INC(const std::size_t position);
     void MOVE(const std::size_t x, const std::size_t y);
@@ -25,11 +25,11 @@ class SparseArray {
     void copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy);
     void mem(const std::size_t begin, const std::size_t end);
 
-   private:
+private:
     bool isInIndexArray(const std::size_t position) const;
 
     void changeValue(const std::size_t position, unsigned int value);
 
-    private:
+private:
     std::map<std::size_t, unsigned int> memory;
 };

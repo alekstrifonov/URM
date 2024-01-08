@@ -18,12 +18,18 @@ SparseArray::SparseArray(const std::vector<unsigned int> x) {
 }
 
 bool SparseArray::isInIndexArray(const std::size_t position) const {
+
+    if (memory.empty()) {
+        return false;
+    }
+
     iter end = memory.end();
     --end;
 
     if (position > end->first) {
         return false;
-    } else {
+    }
+    else {
         for (iter i = memory.begin(); i != memory.end(); ++i) {
             if (position == i->first) {
                 return true;
@@ -34,29 +40,36 @@ bool SparseArray::isInIndexArray(const std::size_t position) const {
     return false;
 }
 
-std::size_t SparseArray::size() const { return memory.size(); }
+std::size_t SparseArray::size() const {
+    return memory.size();
+}
 
-bool SparseArray::equal(
-    const std::size_t x,
-    const std::size_t y)  // helper function for URM's IF_JUMP
-{
+bool SparseArray::equal(const std::size_t x, const std::size_t y) {// helper function for URM's IF_JUMP
+
     if (!isInIndexArray(x)) {
         if (!isInIndexArray(y)) {
-            return true;  // both are zero
+            return true; // both are zero
         }
-        return false;  // x == 0, y != 0
+        return false; // x == 0, y != 0
     }
 
     if (!isInIndexArray(y)) {
-        return false;  // x != 0, y == 0
+        return false; // x != 0, y == 0
     }
 
     return memory[x] == memory[y];
 }
 
-void SparseArray::clear() { memory.clear(); }
+void SparseArray::clear() {
+    memory.clear();
+}
 
 void SparseArray::ZERO(const std::size_t position) {
+    if (memory.empty()) //nothing to delete
+    {
+        return;
+    }
+
     if (!isInIndexArray(position)) {
         return;
     }
@@ -86,14 +99,14 @@ void SparseArray::MOVE(const std::size_t x, const std::size_t y) {
 void SparseArray::zero(const std::size_t begin, const std::size_t end) {
     if (begin > end) {
         std::cerr << "INVALID RANGE GIVEN: " << begin
-                  << " IS LARGER THAN: " << end;
+            << " IS LARGER THAN: " << end;
     }
 
     iter temp = memory.end();
     --temp;
 
     if (end < memory.begin()->first || begin > temp->first) {
-        return;  // the range to nullify is already zero
+        return; // the range to nullify is already zero
     }
 
     iter beginIndex = memory.end();
@@ -105,14 +118,14 @@ void SparseArray::zero(const std::size_t begin, const std::size_t end) {
         }
 
         if (i->first <= end) {
-            endIndex = i;  // erase removes elemets in the range [first, last)
-        } else {
+            endIndex = i;
+        }
+        else {
             break;
         }
-
     }
 
-    memory.erase(beginIndex, ++endIndex);
+    memory.erase(beginIndex, ++endIndex); // erase removes elemets in the range [first, last)
 }
 
 void SparseArray::set(const std::size_t position, unsigned int newValue) {
@@ -123,8 +136,7 @@ void SparseArray::set(const std::size_t position, unsigned int newValue) {
     memory[position] = newValue;
 }
 
-void SparseArray::copy(const std::size_t begin, const std::size_t end,
-                       const std::size_t ammountToCopy) {
+void SparseArray::copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy) {
     for (std::size_t i = 0; i < ammountToCopy; i++) {
         MOVE(begin + i, end + i);
     }
@@ -134,7 +146,8 @@ void SparseArray::mem(const std::size_t begin, const std::size_t end) {
     for (std::size_t i = 0; i < end; i++) {
         if (isInIndexArray(begin + i)) {
             std::cout << memory[begin + i] << " ";
-        } else {
+        }
+        else {
             std::cout << 0 << " ";
         }
     }
