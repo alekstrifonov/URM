@@ -72,7 +72,7 @@ It's only private member is 'std::map<std::size_t, unsigned int> memory' whose k
 
 **The functionality of the following methods was documented in Instructions and Commands**
 
-    -       'void ZERO(const std::size_t position)'
+    - `void ZERO(const std::size_t position)`
     - 'void INC(const std::size_t position)'
     - 'void MOVE(const std::size_t x, const std::size_t y)'
 
