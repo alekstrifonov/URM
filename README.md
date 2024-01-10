@@ -60,15 +60,17 @@ It's only private member is 'std::map<std::size_t, unsigned int> memory' whose k
 
 **Public members**
 
+```c++
     - SparseArray() : Default constructor
-    - 'SparseArray(std::vector<unsigned int> x)' : Constructor that takes a vector and copies it to memory - **Used for Testing**
-    - 'std::size_t size() const' : Returns the size of our memory - **Used for Testing**
+    - SparseArray(std::vector<unsigned int> x) : Constructor that takes a vector and copies it to memory - **Used for Testing**
+    - std::size_t size() const : Returns the size of our memory - **Used for Testing**
 
-    - 'const std::vector<unsigned int> getValues() const' : Returns a vector of all the non-zero values of the memory - **Used for Testing**
-    - 'const std::vector<std::size_t> getIndexes() const' : Returns a vector of all the indexes of non-zero values - **Used for Testing**
+    - const std::vector<unsigned int> getValues() const : Returns a vector of all the non-zero values of the memory - **Used for Testing**
+    - const std::vector<std::size_t> getIndexes() const : Returns a vector of all the indexes of non-zero values - **Used for Testing**
 
-    - 'bool equal(const std::size_t x, const std::size_t y)': Checks if the values of indices x and y are equal - **Used in JUMP**
-    - 'void clear()' : Clears the memory - **Used in /load**
+    - bool equal(const std::size_t x, const std::size_t y): Checks if the values of indices x and y are equal - **Used in JUMP**
+    - void clear() : Clears the memory - **Used in /load**
+``` 
 
 **The functionality of the following methods was documented in Instructions and Commands**
 
@@ -148,39 +150,3 @@ The URM class is tasked with taking an input stream, tokenizing it and evaluatin
 
     void getInstructions() //used in  /code - public for testing
 ```
-## How to use
-
-In the `main()` function
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
