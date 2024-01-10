@@ -19,12 +19,8 @@ public:
 
     Tokenizer(std::istream&);
 
-    Token getNextToken();
-    Token peekToken();
-
 private:
     std::istream& in;
-    Token* peeked;
 };
 
 std::istream& operator>>(std::istream&, Tokenizer::Token&);

@@ -151,9 +151,7 @@ std::istream& operator>>(std::istream& in, Tokenizer::Token& t) {
         std::getline(in, t.keyword);
     }
     else {
-        std::cerr << "WRONG INPUT: "
-            << keyword; // will need to handle exceptions better in the//
-        // future
+        std::cerr << "WRONG INPUT: " << keyword;
     }
 
     return in;
