@@ -1,7 +1,6 @@
 #include "URM.hpp"
 
 URM::URM() {
-    JUMP_INCREMENT = 0;
     tempFileName = "instructions.urm";
     numberOfInstructions = 0;
     clearTempFile();
@@ -45,30 +44,13 @@ void URM::getInstructions() {
     code.close();
 }
 
-void URM::JUMP(const std::size_t instructionNumber) {
-    if (inFile.is_open()) {
-        inFile.close();
-    }
-
-    inFile.open(tempFileName, std::ios::in);
-    std::size_t counter = 0;
-
-    while (inFile >> currentInstruction && counter <= instructionNumber) {
-        ++counter;
-    }
-
-    evaluate(inFile);
-
-    inFile.close();
-}
-
-void URM::IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z, std::istream& is) {
-    if (memory.equal(x, y)) {
-        JUMP(z);
-    }
-}
-
 void URM::loadFromFile(const std::string& fileName) {
+    std::string code = "CODE.urm";
+
+    // if (std::remove(code.c_str()) != 0) {
+    //     std::cerr << "Error deleting " << code << "\n";
+    // }
+
     memory.clear();
     add(fileName);
 }
@@ -88,14 +70,41 @@ void URM::dialogue() {
 
         std::stringstream ss(prompt);
         ss >> currentInstruction;
-        evaluate(ss);
+        evaluate();
     }
 
     std::cout << "Bye!";
 }
 
-void URM::run() { // add exception for jump instruction
+void URM::JUMP(const std::size_t instructionNumber) {
 
+    std::size_t counter = 0;
+
+
+    while (counter < instructionNumber)
+    {
+        if (!inFile.eof())
+        {
+            inFile >> currentInstruction;
+            //std::cout << currentInstruction.type << std::endl;
+        }
+        else
+        {
+            inFile.tellg();//jumped reached beyond scope of the file
+        }
+        ++counter;
+    }
+
+    inFile.tellg();
+}
+
+void URM::IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z) {
+    if (memory.equal(x, y)) {
+        JUMP(z);
+    }
+}
+
+void URM::run() {
     inFile.open(tempFileName, std::ios::in);
 
     std::streampos lastPosition;
@@ -103,8 +112,16 @@ void URM::run() { // add exception for jump instruction
     std::size_t processedInstructions = 0; // keep track of processed instructions
 
     while (!inFile.eof() && processedInstructions < numberOfInstructions) {
+
+        if (currentInstruction.type == Tokenizer::JUMP)
+        {
+            JUMP(currentInstruction.value[0] - processedInstructions);
+            processedInstructions += currentInstruction.value[0] + 1;
+        }
+
+
         inFile >> currentInstruction;
-        evaluate(inFile);
+        evaluate();
 
         ++processedInstructions;
         lastPosition = inFile.tellg(); // keep track of position in the tempfile
@@ -117,12 +134,11 @@ void URM::run() { // add exception for jump instruction
 
         for (; processedInstructions < numberOfInstructions - 1; processedInstructions++) {
             inFile >> currentInstruction;
-            evaluate(inFile);
+            evaluate();
         }
 
         lastPosition = inFile.tellg();
     }
-
     inFile.close();
 }
 
@@ -160,7 +176,7 @@ void URM::quote(const std::string& instruction) {
     outFile.close();
 }
 
-void URM::evaluate(std::istream& is) {
+void URM::evaluate() {
 
     switch (currentInstruction.type) {
 
@@ -175,15 +191,6 @@ void URM::evaluate(std::istream& is) {
     case Tokenizer::MOVE:
         memory.MOVE(currentInstruction.value[0],
             currentInstruction.value[1]);
-        break;
-
-    case Tokenizer::JUMP:
-        JUMP(currentInstruction.value[0]);
-        break;
-
-    case Tokenizer::IF_JUMP:
-        IF_JUMP(currentInstruction.value[0], currentInstruction.value[1],
-            currentInstruction.value[2], is);
         break;
 
     case Tokenizer::RANGE_ZERO:
@@ -214,6 +221,7 @@ void URM::evaluate(std::istream& is) {
     case Tokenizer::RUN:
         run();
         break;
+
     case Tokenizer::ADD:
         add(currentInstruction.keyword);
         break;
@@ -221,6 +229,7 @@ void URM::evaluate(std::istream& is) {
     case Tokenizer::QUOTE:
         quote(currentInstruction.keyword);
         break;
+
     case Tokenizer::CODE:
         getInstructions();
         break;

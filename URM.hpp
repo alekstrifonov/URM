@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 #include "SparseArray.hpp"
 #include "tokenizer.hpp"
@@ -8,14 +9,14 @@
 class URM {
 public:
     URM();
-
+    ~URM();
 
     Tokenizer::Token getCurrentInstruction(std::istream& is);
 
     void loadFromFile(const std::string& fileName);
     void dialogue();
 
-    void evaluate(std::istream&);
+    void evaluate();
 
     void getInstructions();
 
@@ -27,12 +28,11 @@ private:
     void clearTempFile();
 
     void JUMP(const std::size_t);
-    void IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z, std::istream& is);
+    void IF_JUMP(const std::size_t x, const std::size_t y, const std::size_t z);
 
 private:
     Tokenizer::Token currentInstruction;
     SparseArray memory;
-    std::size_t JUMP_INCREMENT;
     std::size_t numberOfInstructions;
     std::string tempFileName;
     std::ofstream outFile;
