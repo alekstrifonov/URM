@@ -6,7 +6,7 @@
 #include "tokenizer.hpp"
 #include <iostream>
 
-void compare(const SparseArray &a, const std::vector<unsigned int> &b) {
+void compare(const SparseArray& a, const std::vector<unsigned int>& b) {
     std::size_t j = 0;
     for (std::size_t i = 0; i < b.size(); i++) {
         if (b[i] != 0) {
@@ -17,7 +17,7 @@ void compare(const SparseArray &a, const std::vector<unsigned int> &b) {
 }
 
 TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS") {
-    std::vector<unsigned int> b = {1, 0, 0, 5, 0, 4, 3};
+    std::vector<unsigned int> b = { 1, 0, 0, 5, 0, 4, 3 };
 
     SparseArray a(b);
 
@@ -27,7 +27,7 @@ TEST_CASE("TEST SPARSE ARRAY BASIC FUNCTIONS") {
 TEST_CASE("TEST ZERO AND INC") {
     SparseArray a;
 
-    std::vector<unsigned int> b = {1, 2, 3};
+    std::vector<unsigned int> b = { 1, 2, 3 };
 
     a.INC(0);
     a.INC(1);
@@ -50,7 +50,7 @@ TEST_CASE("TEST ZERO AND INC") {
 }
 
 TEST_CASE("TEST MOVE") {
-    std::vector<unsigned int> b = {4, 1, 1, 1};
+    std::vector<unsigned int> b = { 4, 1, 1, 1 };
 
     SparseArray a(b);
 
@@ -68,13 +68,13 @@ TEST_CASE("TEST MOVE") {
     a.INC(1);
     a.MOVE(1, 2);
 
-    std::vector<unsigned int> c = {2, 2, 1};
+    std::vector<unsigned int> c = { 2, 2, 1 };
 
     compare(a, c);
 }
 
 TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS") {
-    std::vector<unsigned int> b = {0, 2, 9, 0, 1, 3, 4, 5, 0, 2, 7};
+    std::vector<unsigned int> b = { 0, 2, 9, 0, 1, 3, 4, 5, 0, 2, 7 };
 
     SparseArray a(b);
 
@@ -83,8 +83,8 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS") {
 
         CHECK(a.size() == 4);
 
-        std::vector<unsigned int> valueResult = {2, 9, 2, 7};
-        std::vector<unsigned int> indexResult = {1, 2, 9, 10};
+        std::vector<unsigned int> valueResult = { 2, 9, 2, 7 };
+        std::vector<unsigned int> indexResult = { 1, 2, 9, 10 };
 
         for (std::size_t i = 0; i < a.size(); i++) {
             CHECK(a.getIndexes()[i] == indexResult[i]);
@@ -104,12 +104,12 @@ TEST_CASE("TEST / SPARSE ARRAY FUNCTIONS") {
 
         a.set(3, 3);
         CHECK(a.size() == 9);
-        std::vector<unsigned int> toCompare = {2, 9, 3, 2, 3, 4, 5, 2, 7};
+        std::vector<unsigned int> toCompare = { 2, 9, 3, 2, 3, 4, 5, 2, 7 };
         compare(a, toCompare);
     }
 
     SUBCASE("TESTING /copy") {
-        std::vector<unsigned int> toCompare = {2, 9, 2, 9, 4, 5, 2, 7};
+        std::vector<unsigned int> toCompare = { 2, 9, 2, 9, 4, 5, 2, 7 };
         a.copy(0, 3, 3);
         a.mem(0, 11);
         compare(a, toCompare);
@@ -248,13 +248,13 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     URM a;
 
     CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
-    a.evaluate(is);
+    a.evaluate();
 
     CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
-    a.evaluate(is);
+    a.evaluate();
 
     CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
-    a.evaluate(is);
+    a.evaluate();
 
     std::ifstream loadedFile("sample.urm");
     a.getInstructions();
@@ -288,6 +288,22 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     }
 
     addedFile.close();
+}
+
+TEST_CASE("TEST JUMP")
+{
+    std::ifstream is("jump_temp.urm");
+    URM a;
+
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
+    a.evaluate();
+
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
+    a.evaluate();
+
+    CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
+    a.evaluate();
+
 }
 
 int main() {
