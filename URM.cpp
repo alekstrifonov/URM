@@ -86,11 +86,11 @@ void URM::JUMP(const std::size_t instructionNumber) {
         if (!inFile.eof())
         {
             inFile >> currentInstruction;
-            //std::cout << currentInstruction.type << std::endl;
         }
         else
         {
-            inFile.tellg();//jumped reached beyond scope of the file
+            inFile.tellg(); //jumped reached beyond scope of the file
+            return;
         }
         ++counter;
     }
@@ -113,12 +113,10 @@ void URM::run() {
 
     while (!inFile.eof() && processedInstructions < numberOfInstructions) {
 
-        if (currentInstruction.type == Tokenizer::JUMP)
+        if (currentInstruction.type == Tokenizer::JUMP || currentInstruction.type == Tokenizer::IF_JUMP)
         {
-            JUMP(currentInstruction.value[0] - processedInstructions);
-            processedInstructions += currentInstruction.value[0] + 1;
+            jumpEval(processedInstructions);
         }
-
 
         inFile >> currentInstruction;
         evaluate();
@@ -132,7 +130,12 @@ void URM::run() {
         inFile.open(tempFileName, std::ios::in); // reopen the tempfile to reload the data
         inFile.seekg(lastPosition);              // go to the newest instruction
 
+
         for (; processedInstructions < numberOfInstructions - 1; processedInstructions++) {
+            if (currentInstruction.type == Tokenizer::JUMP || currentInstruction.type == Tokenizer::IF_JUMP)
+            {
+                jumpEval(processedInstructions);
+            }
             inFile >> currentInstruction;
             evaluate();
         }
@@ -174,6 +177,23 @@ void URM::quote(const std::string& instruction) {
     ++numberOfInstructions;
 
     outFile.close();
+}
+
+void URM::jumpEval(std::size_t& processedInstructions)
+{
+    switch (currentInstruction.type)
+    {
+    case Tokenizer::JUMP:
+        JUMP(currentInstruction.value[0] - processedInstructions);
+        processedInstructions += currentInstruction.value[0] + 1;
+        break;
+
+    case Tokenizer::IF_JUMP:
+        IF_JUMP(currentInstruction.value[0], currentInstruction.value[1], currentInstruction.value[2] - processedInstructions);
+
+    default:
+        break;
+    }
 }
 
 void URM::evaluate() {
@@ -234,7 +254,7 @@ void URM::evaluate() {
         getInstructions();
         break;
 
-    case Tokenizer::COMMENT: // add exception for empty comments
+    case Tokenizer::COMMENT:
         break;
 
     default:

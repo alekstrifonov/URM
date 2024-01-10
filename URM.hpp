@@ -24,6 +24,7 @@ private:
     void quote(const std::string& instruction);
     void run();
     void add(const std::string& fileName);
+    void jumpEval(std::size_t&);
 
     void clearTempFile();
 

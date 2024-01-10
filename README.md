@@ -60,7 +60,7 @@ It's only private member is 'std::map<std::size_t, unsigned int> memory' whose k
 
 **Public members**
 
-    - 'SparseArray()' : Default constructor
+    - SparseArray() : Default constructor
     - 'SparseArray(std::vector<unsigned int> x)' : Constructor that takes a vector and copies it to memory - **Used for Testing**
     - 'std::size_t size() const' : Returns the size of our memory - **Used for Testing**
 
@@ -72,16 +72,85 @@ It's only private member is 'std::map<std::size_t, unsigned int> memory' whose k
 
 **The functionality of the following methods was documented in Instructions and Commands**
 
-    - `void ZERO(const std::size_t position)`
-    - 'void INC(const std::size_t position)'
-    - 'void MOVE(const std::size_t x, const std::size_t y)'
+```c++
+    - void ZERO(const std::size_t position)
+    - void INC(const std::size_t position)
+    - void MOVE(const std::size_t x, const std::size_t y)
 
-    - 'void zero(const std::size_t begin, const std::size_t end)'
-    - 'void set(const std::size_t position, unsigned int newValue)'
-    - 'void copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy)'
-    - 'void mem(const std::size_t begin, const std::size_t end)'
+    - void zero(const std::size_t begin, const std::size_t end)
+    - void set(const std::size_t position, unsigned int newValue)
+    - void copy(const std::size_t begin, const std::size_t end, const std::size_t ammountToCopy)
+    - void mem(const std::size_t begin, const std::size_t end)
+```
 
 ## Tokenizer Class
+
+### Overview
+
+The tokenizer class is tasked with taking a stream as an input and returning a token.
+
+The different Token types correspond to our commands and instructions.
+
+***The Token**
+```c++
+    struct Token {
+        Tokens type;
+        std::string keyword;
+        std::vector<std::size_t> value; 
+
+        bool operator==(const Token&);
+    };
+```
+
+We use a vector since not all functions are unitary and some don't even take arguments.
+
+The `operator==` is used for testing.
+
+**Public members**
+```c++
+    std::istream& operator>>(std::istream&, Tokenizer::Token&);
+```
+
+We use the operator to read from our temporary file and evaluate the tokens.
+
+## URM Class
+
+### Overview
+
+The URM class is tasked with taking an input stream, tokenizing it and evaluating it - either changing the contents of its memory, or the order of operations.
+
+**Private members**
+```c++
+    Tokenizer::Token currentInstruction; 
+    SparseArray memory;
+    std::size_t numberOfInstructions;
+    std::string tempFileName;
+    std::ofstream outFile;
+    std::ifstream inFile;
+```
+
+    - numberOfInstructions is used for our file handling and JUMP instructions.
+    - we store the given commands and instructions in a temporary file that get's deleted after program
+    - we read and write to the tempfile using the fstreams inFile and outFile.
+
+**Public members**
+```c++
+    URM(); 
+    ~URM();
+
+    Tokenizer::Token getCurrentInstruction(std::istream& is);
+
+    void loadFromFile(const std::string& fileName); //used in /add - public for testing purposes
+
+    void dialogue(); //this is how the user interacts with the interpreter.
+
+    void evaluate(); // evaluates the currentInstruction - public for testing
+
+    void getInstructions() //used in  /code - public for testing
+```
+## How to use
+
+In the `main()` function
 
 
 

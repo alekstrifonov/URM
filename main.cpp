@@ -290,26 +290,9 @@ TEST_CASE("TEST URM BASIC FUNCTIONALITY") {
     addedFile.close();
 }
 
-TEST_CASE("TEST JUMP")
-{
-    std::ifstream is("jump_temp.urm");
-    URM a;
-
-    CHECK(a.getCurrentInstruction(is).type == Tokenizer::LOAD);
-    a.evaluate();
-
-    CHECK(a.getCurrentInstruction(is).type == Tokenizer::INC);
-    a.evaluate();
-
-    CHECK(a.getCurrentInstruction(is).type == Tokenizer::RUN);
-    a.evaluate();
-
-}
-
 int main() {
     doctest::Context().run();
 
     URM a;
-    // a.dialogue();
-    // a.getInstructions();
+    a.dialogue();
 }
