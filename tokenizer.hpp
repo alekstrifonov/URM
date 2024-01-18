@@ -6,7 +6,7 @@
 class Tokenizer {
 public:
     enum Tokens {
-        ZERO, INC, MOVE, IF_JUMP, JUMP, RANGE_ZERO, SET, COPY, MEM, LOAD, RUN, ADD, QUOTE, CODE, COMMENT
+        ZERO, INC, MOVE, IF_JUMP, JUMP, RANGE_ZERO, SET, COPY, MEM, LOAD, RUN, ADD, QUOTE, CODE, COMMENT, END
     };
 
     struct Token {

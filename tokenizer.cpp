@@ -48,7 +48,7 @@ std::istream& operator>>(std::istream& in, Tokenizer::Token& t) {
 
     in >> keyword;
 
-    t.keyword = "";
+    t.keyword = keyword;
 
     if (keyword == "ZERO") {
         t.type = Tokenizer::ZERO;
@@ -128,6 +128,7 @@ std::istream& operator>>(std::istream& in, Tokenizer::Token& t) {
         clear(in);
     }
     else if (keyword == "/add") {
+
         t.type = Tokenizer::ADD;
         clear(in);
 
@@ -150,8 +151,9 @@ std::istream& operator>>(std::istream& in, Tokenizer::Token& t) {
 
         std::getline(in, t.keyword);
     }
-    else {
-        std::cerr << "WRONG INPUT: " << keyword;
+    else if (keyword.empty())
+    {
+        t.type = Tokenizer::END;
     }
 
     return in;
